@@ -1,4 +1,4 @@
 base:
   '*':
-    - salt.standalone
     - salt.cloud
+    - salt.standalone

@@ -21,16 +21,6 @@ apache-libcloud:
     - require:
       - pkg: python-pip
 
-salt-cloud:
-  # pkg.installed:
-  #   - name: {{ salt_settings.salt_cloud }}
-  #   - require:
-  #     - pip: apache-libcloud
-  #     - pip: pycrypto
-  #     {% if grains['os_family'] not in ['Debian', 'RedHat'] %}
-  #     - pip: crypto
-  #     {% endif %}
-
 {% for folder in salt_settings.cloud.folders %}
 {{ folder }}:
   file.directory:
@@ -42,8 +32,7 @@ salt-cloud:
     - makedirs: True
 {% endfor %}
 
-{% for cert in salt_settings.salt_cloud_certs %}
-{% for type in ['pem'] %}
+{% for cert in salt['pillar.get']('salt_cloud_certs', {}) %}
 cloud-cert-{{ cert }}-pem:
   file.managed:
     - name: /etc/salt/cloud.providers.d/key/{{ cert }}.pem
@@ -54,8 +43,7 @@ cloud-cert-{{ cert }}-pem:
     - mode: 600
     - defaults:
         key: {{ cert }}
-        type: {{ type }}
-{% endfor %}
+        type: pem
 {% endfor %}
 
 {% for providers in salt_settings.cloud.providers %}
