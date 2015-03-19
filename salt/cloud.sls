@@ -1,6 +1,4 @@
-{% from "salt/map.jinja" import salt with context %}
-{% do salt.update(pillar.get('salt', {})) -%}
-{% set cloud = salt.get('cloud', {}) -%}
+{% from "salt/map.jinja" import salt_settings with context %}
 
 python-pip:
   pkg.installed
@@ -23,17 +21,17 @@ apache-libcloud:
     - require:
       - pkg: python-pip
 
-# salt-cloud:
-#   pkg.installed:
-#     - name: {{ salt['salt-cloud'] }}
-#     - require:
-#       - pip: apache-libcloud
-#       - pip: pycrypto
-#       {% if grains['os_family'] not in ['Debian', 'RedHat'] %}
-#       - pip: crypto
-#       {% endif %}
+salt-cloud:
+  # pkg.installed:
+  #   - name: {{ salt_settings.salt_cloud }}
+  #   - require:
+  #     - pip: apache-libcloud
+  #     - pip: pycrypto
+  #     {% if grains['os_family'] not in ['Debian', 'RedHat'] %}
+  #     - pip: crypto
+  #     {% endif %}
 
-{% for folder in cloud['folders'] %}
+{% for folder in salt_settings.cloud.folders %}
 {{ folder }}:
   file.directory:
     - name: /etc/salt/{{ folder }}
@@ -44,7 +42,7 @@ apache-libcloud:
     - makedirs: True
 {% endfor %}
 
-{% for cert in pillar.get('salt_cloud_certs', {}) %}
+{% for cert in salt_settings.salt_cloud_certs %}
 {% for type in ['pem'] %}
 cloud-cert-{{ cert }}-pem:
   file.managed:
@@ -60,23 +58,19 @@ cloud-cert-{{ cert }}-pem:
 {% endfor %}
 {% endfor %}
 
-{% for providers in cloud['providers'] %}
+{% for providers in salt_settings.cloud.providers %}
 salt-cloud-profiles-{{ providers }}:
   file.managed:
     - name: /etc/salt/cloud.profiles.d/{{ providers }}.conf
     - template: jinja
     - source: salt://salt/files/cloud.profiles.d/{{ providers }}.conf
-{% endfor %}
 
-{% for providers in cloud['providers'] %}
 salt-cloud-providers-{{ providers }}:
   file.managed:
     - name: /etc/salt/cloud.providers.d/{{ providers }}.conf
     - template: jinja
     - source: salt://salt/files/cloud.providers.d/{{ providers }}.conf
-{% endfor %}
 
-{% for providers in cloud['providers'] %}
 salt-cloud-maps-{{ providers }}:
   file.managed:
     - name: /etc/salt/cloud.maps.d/{{ providers }}.conf
