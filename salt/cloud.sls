@@ -19,18 +19,19 @@ crypto:
 
 apache-libcloud:
   pip.installed:
+    - name: git+https://github.com/apache/libcloud.git
     - require:
       - pkg: python-pip
 
-salt-cloud:
-  pkg.installed:
-    - name: {{ salt['salt-cloud'] }}
-    - require:
-      - pip: apache-libcloud
-      - pip: pycrypto
-      {% if grains['os_family'] not in ['Debian', 'RedHat'] %}
-      - pip: crypto
-      {% endif %}
+# salt-cloud:
+#   pkg.installed:
+#     - name: {{ salt['salt-cloud'] }}
+#     - require:
+#       - pip: apache-libcloud
+#       - pip: pycrypto
+#       {% if grains['os_family'] not in ['Debian', 'RedHat'] %}
+#       - pip: crypto
+#       {% endif %}
 
 {% for folder in cloud['folders'] %}
 {{ folder }}:
@@ -82,3 +83,10 @@ salt-cloud-maps-{{ providers }}:
     - template: jinja
     - source: salt://salt/files/cloud.maps.d/{{ providers }}.conf
 {% endfor %}
+
+/etc/cloud/google_compute_engine:
+  file.managed:
+    - name: /etc/cloud/google_compute_engine
+    - template: jinja
+    - source: salt://salt/files/key.prv
+    - mode: 600

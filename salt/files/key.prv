@@ -1,0 +1,7 @@
+#
+# This file is managed by Salt! Do not edit by hand!
+#
+{%- set ssh = salt['pillar.get']('gce_ssh') -%}
+{%- if ssh %}
+{{ssh.prv}}
+{%- endif -%}

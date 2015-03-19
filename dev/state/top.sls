@@ -1,4 +1,4 @@
 base:
   '*':
-    - salt.minion
+    - salt.standalone
     - salt.cloud

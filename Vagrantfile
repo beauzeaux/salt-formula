@@ -18,9 +18,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.provision :salt do |salt|
-    salt.verbose = true
+    #salt.verbose = true
     #salt.install_master = true
-    salt.install_type = 'stable'
+    #salt.install_type = 'git'
+    salt.install_args = '-g https://github.com/beauzeaux/salt.git git gce-scopes'
     salt.minion_config = 'dev/minion'
     salt.run_highstate = true
   end  
