@@ -12,5 +12,5 @@ salt-master:
     - enable: True
     - name: {{ salt_settings.master_service }}
     - watch:
-      - pkg: salt-master
+      # - pkg: salt-master
       - file: salt-master
