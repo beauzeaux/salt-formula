@@ -1,8 +1,8 @@
 {% from "salt/map.jinja" import salt_settings with context %}
 
 salt-master:
-  pkg.installed:
-    - name: {{ salt_settings.salt_master }}
+  # pkg.installed:
+  #   - name: {{ salt_settings.salt_master }}
   file.recurse:
     - name: {{ salt_settings.config_path }}/master.d
     - template: jinja
